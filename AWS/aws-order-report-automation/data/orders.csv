@@ -1,0 +1,31 @@
+order_id,customer_name,product,category,quantity,price,city,order_date
+1,Rahul Sharma,Laptop,Electronics,1,55000,Mumbai,2026-03-01
+2,Priya Mehta,Headphones,Electronics,2,2000,Delhi,2026-03-01
+3,Amit Patel,Shoes,Fashion,1,3500,Bangalore,2026-03-01
+4,Neha Singh,Watch,Fashion,1,5000,Mumbai,2026-03-02
+5,Rohan Das,Mobile,Electronics,1,25000,Kolkata,2026-03-02
+6,Sneha Iyer,Bag,Fashion,2,1500,Chennai,2026-03-02
+7,Arjun Nair,Keyboard,Electronics,1,1200,Bangalore,2026-03-03
+8,Ananya Gupta,Tablet,Electronics,1,18000,Delhi,2026-03-03
+9,Vikas Verma,Camera,Electronics,1,30000,Mumbai,2026-03-03
+10,Karan Shah,T-shirt,Fashion,3,800,Ahmedabad,2026-03-04
+11,Pooja Joshi,Microwave,Home,1,7000,Pune,2026-03-04
+12,Ritu Kapoor,Blender,Home,1,2500,Delhi,2026-03-04
+13,Aakash Jain,Monitor,Electronics,1,12000,Bangalore,2026-03-05
+14,Simran Kaur,Sandals,Fashion,2,1200,Chandigarh,2026-03-05
+15,Deepak Yadav,Printer,Electronics,1,8000,Lucknow,2026-03-05
+16,Sanjay Mishra,Desk,Home,1,6000,Mumbai,2026-03-06
+17,Kavita Reddy,Lamp,Home,2,900,Hyderabad,2026-03-06
+18,Nikhil Bansal,Router,Electronics,1,3500,Delhi,2026-03-06
+19,Raj Malhotra,TV,Electronics,1,45000,Mumbai,2026-03-07
+20,Meera Pillai,Chair,Home,2,2000,Chennai,2026-03-07
+21,Tarun Arora,Jacket,Fashion,1,4000,Delhi,2026-03-07
+22,Aisha Khan,Perfume,Fashion,1,3000,Mumbai,2026-03-08
+23,Varun Agarwal,Hard Drive,Electronics,1,5500,Bangalore,2026-03-08
+24,Riya Chatterjee,Smart Watch,Electronics,1,9000,Kolkata,2026-03-08
+25,Aditya Roy,Speakers,Electronics,2,2500,Mumbai,2026-03-09
+26,Manish Tiwari,Iron,Home,1,1800,Delhi,2026-03-09
+27,Sakshi Gupta,Saree,Fashion,1,3500,Varanasi,2026-03-09
+28,Abhishek Kulkarni,Mouse,Electronics,2,700,Pune,2026-03-10
+29,Pankaj Sharma,AC,Home,1,35000,Jaipur,2026-03-10
+30,Ritu Sinha,Refrigerator,Home,1,40000,Patna,2026-03-10
