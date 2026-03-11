@@ -1,0 +1,16 @@
+orders.csv upload
+        │
+        ▼
+S3 Bucket (incoming/)
+        │
+        ▼
+S3 Event Notification
+        │
+        ▼
+Lambda Function
+        │
+        ▼
+Summary CSV
+        │
+        ▼
+S3 Bucket (reports/)
