@@ -1,0 +1,23 @@
+{
+	"name": "DS_Azure_SQL",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "sqldatabaseserver30.database.windows.net",
+			"database": "spotifysqldatabase",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "adminpooja",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_KeyVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "sql-database"
+			}
+		}
+	}
+}
