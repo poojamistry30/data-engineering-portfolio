@@ -1,0 +1,15 @@
+{
+	"name": "SpotifyDataFactory30",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ebd9ebfa-cbe3-4f50-8ae9-9e5716502f51",
+		"tenantId": "557211a2-d3ce-4e6a-bfdd-766e3d69188b"
+	}
+}
