@@ -1,0 +1,17 @@
+{
+	"name": "ls_filesystem_src_dev",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "C:\\Users\\POOJA MISTRY\\Documents\\Azure Project\\Files",
+			"userId": ".\\pooja mistry",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5MDg1MTZjYS02MzIxLTQzOGQtYjBjMS04YTdhZjlkZWMwMDEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IR-SHIR-ONPREM-ADLSDEV",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

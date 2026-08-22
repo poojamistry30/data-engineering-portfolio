@@ -1,0 +1,15 @@
+{
+	"name": "datafactorysapproject",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "8e9c0d01-7f4e-46e8-a631-4bcef20e548a",
+		"tenantId": "557211a2-d3ce-4e6a-bfdd-766e3d69188b"
+	}
+}
