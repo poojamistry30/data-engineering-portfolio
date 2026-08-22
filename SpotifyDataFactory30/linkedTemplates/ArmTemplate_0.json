@@ -1,0 +1,625 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "SpotifyDataFactory30"
+		},
+		"LS_ADLS_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_ADLS'"
+		},
+		"LS_ADLS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://spotifyadlsstorage.dfs.core.windows.net/"
+		},
+		"LS_KeyVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://spotifykv.vault.azure.net/"
+		},
+		"LS_Azure_SQL_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqldatabaseserver30.database.windows.net"
+		},
+		"LS_Azure_SQL_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "spotifysqldatabase"
+		},
+		"LS_Azure_SQL_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminpooja"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_ADLS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_ADLS_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('LS_ADLS_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_KeyVault')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('LS_KeyVault_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_ADLS_JSON')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container_name": {
+						"type": "string"
+					},
+					"folder_name": {
+						"type": "string"
+					},
+					"file_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().file_name",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().folder_name",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container_name",
+							"type": "Expression"
+						}
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_ADLS_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container_name": {
+						"type": "string"
+					},
+					"folder_name": {
+						"type": "string"
+					},
+					"file_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().file_name",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().folder_name",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container_name",
+							"type": "Expression"
+						}
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_Azure_SQL')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('LS_Azure_SQL_properties_typeProperties_server')]",
+					"database": "[parameters('LS_Azure_SQL_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('LS_Azure_SQL_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_KeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "sql-database"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_KeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Azure_SQL')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Azure_SQL",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema_name": {
+						"type": "string"
+					},
+					"table_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Incremental_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Loop_Input",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.loop_input",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Lookup_Last_CDC",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "JsonSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "JsonReadSettings"
+											}
+										},
+										"dataset": {
+											"referenceName": "DS_ADLS_JSON",
+											"type": "DatasetReference",
+											"parameters": {
+												"container_name": "bronze",
+												"folder_name": {
+													"value": "@{item().table}_cdc",
+													"type": "Expression"
+												},
+												"file_name": "cdc.json"
+											}
+										}
+									}
+								},
+								{
+									"name": "Copy_Data_ADLS",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Lookup_Last_CDC",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "current",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat(\n    'SELECT * FROM ',\n    item().schema,\n    '.',\n    item().table,\n    ' WHERE ',\n    item().cdc_col,\n    ' > ''',\n    if(\n        empty(item().from_date),\n        activity('Lookup_Last_CDC').output.firstRow.cdc,\n        item().from_date\n    ),\n    ''''\n)",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_Azure_SQL",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema_name": "dbo",
+												"table_name": "ordrs"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_ADLS_Parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"container_name": "bronze",
+												"folder_name": {
+													"value": "@item().table",
+													"type": "Expression"
+												},
+												"file_name": {
+													"value": "@concat(\n    item().table,\n    '_',\n    variables('current')\n    )",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "current",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "current",
+										"value": {
+											"value": "@utcNow()",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "If_Incremental_data",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Copy_Data_ADLS",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@greater(activity('Copy_Data_ADLS').output.dataRead,0)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Delete_Empty_File",
+												"type": "Delete",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"dataset": {
+														"referenceName": "DS_ADLS_Parquet",
+														"type": "DatasetReference",
+														"parameters": {
+															"container_name": "bronze",
+															"folder_name": {
+																"value": "@item().table",
+																"type": "Expression"
+															},
+															"file_name": {
+																"value": "@concat(\n    item().table,\n    '_',\n    variables('current')\n)",
+																"type": "Expression"
+															}
+														}
+													},
+													"enableLogging": false,
+													"storeSettings": {
+														"type": "AzureBlobFSReadSettings",
+														"recursive": true,
+														"enablePartitionDiscovery": false
+													}
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Update_Last_CDC",
+												"type": "Copy",
+												"dependsOn": [
+													{
+														"activity": "Max_CDC",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "JsonSource",
+														"additionalColumns": [
+															{
+																"name": "cdc",
+																"value": {
+																	"value": "@activity('Max_CDC').output.resultSets[0].rows[0].cdc",
+																	"type": "Expression"
+																}
+															}
+														],
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "JsonReadSettings"
+														}
+													},
+													"sink": {
+														"type": "JsonSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "JsonWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "DS_ADLS_JSON",
+														"type": "DatasetReference",
+														"parameters": {
+															"container_name": "bronze",
+															"folder_name": {
+																"value": "@{item().table}_cdc",
+																"type": "Expression"
+															},
+															"file_name": "empty.json"
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "DS_ADLS_JSON",
+														"type": "DatasetReference",
+														"parameters": {
+															"container_name": "bronze",
+															"folder_name": {
+																"value": "@{item().table}_cdc",
+																"type": "Expression"
+															},
+															"file_name": "cdc.json"
+														}
+													}
+												]
+											},
+											{
+												"name": "Max_CDC",
+												"type": "Script",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"linkedServiceName": {
+													"referenceName": "LS_Azure_SQL",
+													"type": "LinkedServiceReference"
+												},
+												"typeProperties": {
+													"scripts": [
+														{
+															"type": "Query",
+															"text": {
+																"value": "SELECT MAX(@{item().cdc_col}) AS cdc FROM @{item().schema}.@{item().table}",
+																"type": "Expression"
+															}
+														}
+													],
+													"scriptBlockExecutionTimeout": "02:00:00"
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Web1",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Loop_Input",
+								"dependencyConditions": [
+									"Succeeded",
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://prod-13.eastus.logic.azure.com:443/workflows/50ec8d14f1244e5283c51ffc2f7cfbb7/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=Plc-h9KTy3qLAtq-M60V17jVL-M-HeBYb251OArnQJw",
+							"body": {
+								"value": "{\n    \"pipeline_name\" : \"@{pipeline().Pipeline}\",\n    \"pipeline_runId\" : \"@{pipeline().RunId}\"\n}",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"loop_input": {
+						"type": "array",
+						"defaultValue": [
+							{
+								"schema": "dbo",
+								"table": "DimUser",
+								"cdc_col": "updated_at",
+								"from_date": ""
+							},
+							{
+								"schema": "dbo",
+								"table": "DimTrack",
+								"cdc_col": "updated_at",
+								"from_date": ""
+							},
+							{
+								"schema": "dbo",
+								"table": "DimDate",
+								"cdc_col": "date",
+								"from_date": ""
+							},
+							{
+								"schema": "dbo",
+								"table": "DimArtist",
+								"cdc_col": "updated_at",
+								"from_date": ""
+							},
+							{
+								"schema": "dbo",
+								"table": "FactStream",
+								"cdc_col": "stream_timestamp",
+								"from_date": ""
+							}
+						]
+					}
+				},
+				"variables": {
+					"current": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_ADLS_JSON')]",
+				"[concat(variables('factoryId'), '/datasets/DS_Azure_SQL')]",
+				"[concat(variables('factoryId'), '/datasets/DS_ADLS_Parquet')]",
+				"[concat(variables('factoryId'), '/linkedServices/LS_Azure_SQL')]"
+			]
+		}
+	]
+}
