@@ -1,0 +1,42 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "datafactorysapproject"
+		},
+		"ls_adls_bronze_dev_accountKey": {
+			"value": ""
+		},
+		"ls_filesystem_src_dev_password": {
+			"value": ""
+		},
+		"ls_sqldb_watermark_dev_password": {
+			"value": ""
+		},
+		"ls_adls_bronze_dev_properties_typeProperties_url": {
+			"value": "https://adlsstorage30.dfs.core.windows.net/"
+		},
+		"ls_filesystem_src_dev_properties_typeProperties_host": {
+			"value": "C:\\Users\\POOJA MISTRY\\Documents\\Azure Project\\Files"
+		},
+		"ls_filesystem_src_dev_properties_typeProperties_userId": {
+			"value": ".\\pooja mistry"
+		},
+		"ls_sqldb_watermark_dev_properties_typeProperties_server": {
+			"value": "sqlserver307.database.windows.net"
+		},
+		"ls_sqldb_watermark_dev_properties_typeProperties_database": {
+			"value": "sqldb-p2p-free-dev"
+		},
+		"ls_sqldb_watermark_dev_properties_typeProperties_userName": {
+			"value": "pooja"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
